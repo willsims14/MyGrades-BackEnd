@@ -3,7 +3,7 @@
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from api import views
+from MyGradesBackEnd.api import views
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -11,17 +11,19 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 router = routers.DefaultRouter()
 
-# router.register(r'student', views.StudentList)
+router.register(r'student', views.StudentList)
+router.register(r'course', views.CourseList)
+router.register(r'semester', views.SemesterList)
+router.register(r'user', views.UserList)
+router.register(r'assignment', views.AssignmentList)
+
 # router.register(r'school', views.SchoolList)
 # router.register(r'professor', views.ProfessorList)
-# router.register(r'course', views.CourseList)
-# router.register(r'assignment', views.AssignmentView)
 
 
 app_name = "MyGrades"
 
 urlpatterns = [
-    # Auth / Admini
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api-token-auth/', obtain_auth_token),
     url(r'^', include(router.urls)),

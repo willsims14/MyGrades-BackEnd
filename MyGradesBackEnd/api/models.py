@@ -41,7 +41,7 @@ class Course(models.Model):
     description = models.CharField(max_length=255)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_in_course')
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    assignments = models.ManyToManyField(Assignment)
+    assignments = models.ManyToManyField(Assignment, blank=True, null=True)
 
 
     def __str__(self):

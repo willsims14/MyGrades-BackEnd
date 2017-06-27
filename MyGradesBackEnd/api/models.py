@@ -31,6 +31,7 @@ class Assignment(models.Model):
     points_received = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     description = models.CharField(max_length=255, blank=True, null=True)
 
+
     def __str__(self):
         return str(self.title)
 
@@ -41,7 +42,7 @@ class Course(models.Model):
     description = models.CharField(max_length=255)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_in_course')
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    assignments = models.ManyToManyField(Assignment, blank=True, null=True)
+    assignments = models.ManyToManyField(Assignment, blank=True, null=True, related_name="course_of_assignment")
 
 
     def __str__(self):

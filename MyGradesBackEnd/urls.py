@@ -14,9 +14,11 @@ router = routers.DefaultRouter()
 router.register(r'student', views.StudentList)
 router.register(r'course', views.CourseList)
 router.register(r'semester', views.SemesterList)
+router.register(r'user', views.UserList)
+router.register(r'assignment', views.AssignmentList)
+
 # router.register(r'school', views.SchoolList)
 # router.register(r'professor', views.ProfessorList)
-# router.register(r'assignment', views.AssignmentView)
 
 
 app_name = "MyGrades"

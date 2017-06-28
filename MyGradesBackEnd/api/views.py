@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment
-from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer
+from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
+from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
 from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+
 
 
 ######################################################
@@ -19,9 +23,26 @@ class CourseList(viewsets.ModelViewSet):
             queryset = queryset.filter(student__user__username=username)
         return queryset
 
+    def perform_create(self, serializer):
+        student = Student.objects.get(user=self.request.user.id)
+        serializer.save(student=student)
+
 class CourseDetail(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+
+class CourseAssignmentsList(APIView):
+    queryset = Assignment.objects.all()
+    serializer_class = AssignmentSerializer
+
+    def get(self, request):
+        course_pk = request.query_params.get('course_pk', None)
+
+        if course_pk is not None:
+            assignments = Assignment.objects.filter(course=course_pk)
+            serializer = AssignmentSerializer(assignments, context={'request': request}, many=True)
+        return Response(serializer.data)
+
 
 
 ######################################################
@@ -74,7 +95,13 @@ class AssignmentDetail(viewsets.ModelViewSet):
 
 
 
+######################################################
+####################  School Views  ##################
+######################################################
+class SchoolList(viewsets.ModelViewSet):
+    queryset = School.objects.all()
+    serializer_class = SchoolSerializer
 
-
-
-
+class SchoolDetail(viewsets.ModelViewSet):
+    queryset = School.objects.all()
+    serializer_class = SchoolSerializer

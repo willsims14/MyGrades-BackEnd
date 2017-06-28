@@ -1,23 +1,34 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment
+from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
 
+
+class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Assignment
+        exclude = ()
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
+    semester = serializers.CharField()
     class Meta:
         model = Course
-        exclude = ()
+        exclude = ('student',)
 
 
 class StudentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Student
-        exclude = ('url','user',)
+        exclude = ('user',)
 
 
 class SemesterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Semester
+        exclude = ('url',)
+
+class SchoolSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = School
         exclude = ('url',)
 
 
@@ -36,10 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
-class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Assignment
-        exclude = ()
+
 
 
 

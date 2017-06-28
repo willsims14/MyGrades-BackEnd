@@ -9,7 +9,6 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
         exclude = ()
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
-    semester = serializers.CharField()
     class Meta:
         model = Course
         exclude = ('student',)

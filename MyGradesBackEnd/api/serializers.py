@@ -3,10 +3,16 @@ from django.contrib.auth.models import User
 from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment
 
 
+class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Assignment
+        exclude = ()
+
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
+    semester = serializers.CharField()
     class Meta:
         model = Course
-        exclude = ()
+        exclude = ('student',)
 
 
 class StudentSerializer(serializers.HyperlinkedModelSerializer):
@@ -36,10 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
-class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Assignment
-        exclude = ()
+
 
 
 

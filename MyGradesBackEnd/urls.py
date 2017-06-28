@@ -28,13 +28,16 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_auth_token),
     url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
+    url(r'^course/assignments', views.CourseAssignmentsList.as_view()),
+
+
+    
     # url(r'^register$', views.register_user, name='register'),
 
     # # Gets student by user token upon register/login
     # url(r'^getstudent/(?P<token>\w+)/', views.GetStudentByTokenView.as_view()),
 
     # # Courses
-    # url(r'^course/get/(?P<pk>[0-9]+)/$', views.CourseView.as_view()),
     # url(r'^course/create/', views.CourseView.as_view()),
     # url(r'^course/delete/(?P<pk>[0-9]+)/$', views.CourseView.as_view()),
 

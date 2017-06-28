@@ -28,8 +28,9 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_auth_token),
     url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
-    url(r'^course/assignments', views.CourseAssignmentsList.as_view()),
 
+    url(r'^course/(?P<pk>[0-9]+)/assignments/', views.CourseAssignmentsList.as_view()),
+    url(r'^course/(?P<pk>[0-9]+)/grade/$', views.course_grade_detail),
 
     
     # url(r'^register$', views.register_user, name='register'),

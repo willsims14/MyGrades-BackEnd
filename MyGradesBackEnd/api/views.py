@@ -3,11 +3,12 @@ from rest_framework import viewsets
 from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
 from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
 from django.contrib.auth.models import User
+# Class Based View
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-
-
+# Method Based View
+from rest_framework.decorators import api_view
+from rest_framework import status
 
 ######################################################
 ###################  Course Views  ###################
@@ -35,13 +36,32 @@ class CourseAssignmentsList(APIView):
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
 
-    def get(self, request):
-        course_pk = request.query_params.get('course_pk', None)
+    def get_object(self, pk):
+        try:
+            return Assignment.objects.filter(course=pk)
+        except Assignment.DoesNotExist:
+            raise Http404
 
-        if course_pk is not None:
-            assignments = Assignment.objects.filter(course=course_pk)
-            serializer = AssignmentSerializer(assignments, context={'request': request}, many=True)
+    def get(self, request, pk, format=None):
+        assignments = self.get_object(pk)
+        serializer = AssignmentSerializer(assignments, context={'request': request}, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def course_grade_detail(request, pk, format=None):
+
+    if request.method == 'GET':
+        assignments = Assignment.objects.filter(course=pk)
+
+        possible = 0.0
+        earned = 0.0
+        for x in assignments:
+            if x.points_received != None and x.points_received > 0:
+                earned += float(x.points_received)
+                possible += float(x.points_possible)
+
+        final_grade = (earned / possible) * 100
+        return Response(final_grade)
 
 
 
@@ -91,8 +111,6 @@ class AssignmentList(viewsets.ModelViewSet):
 class AssignmentDetail(viewsets.ModelViewSet):
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
-
-
 
 
 ######################################################

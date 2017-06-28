@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment
-from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer
+from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
+from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -42,7 +42,6 @@ class CourseAssignmentsList(APIView):
             assignments = Assignment.objects.filter(course=course_pk)
             serializer = AssignmentSerializer(assignments, context={'request': request}, many=True)
         return Response(serializer.data)
-
 
 
 
@@ -96,7 +95,13 @@ class AssignmentDetail(viewsets.ModelViewSet):
 
 
 
+######################################################
+####################  School Views  ##################
+######################################################
+class SchoolList(viewsets.ModelViewSet):
+    queryset = School.objects.all()
+    serializer_class = SchoolSerializer
 
-
-
-
+class SchoolDetail(viewsets.ModelViewSet):
+    queryset = School.objects.all()
+    serializer_class = SchoolSerializer

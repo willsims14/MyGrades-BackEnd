@@ -10,6 +10,13 @@ class Semester(models.Model):
     def __str__(self):
         return self.season + " " + str(self.year)
 
+class School(models.Model):
+    name = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Student(models.Model):
@@ -17,7 +24,7 @@ class Student(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     school = models.CharField(max_length=50)
-    # school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return "{} {}".format(self.first_name, self.last_name)

@@ -1,6 +1,12 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.http import HttpResponse
+
 from rest_framework import viewsets
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.models import Token
+
+
 # Class Based View
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,6 +18,27 @@ from django.contrib.auth.models import User
 
 from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
 from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
+
+import json
+
+@csrf_exempt
+def register_user(request):
+    # Load the JSON string of the request body into a dict
+    req_body = json.loads(request.body.decode())
+
+    # Create a new user by invoking the `create_user` helper method on Django's built-in User model
+    new_user = User.objects.create_user(
+                    username=req_body['username'],
+                    password=req_body['password'],
+                    first_name=req_body['first_name'],
+                    last_name=req_body['last_name'])
+
+    # Commit the user to the database by saving it
+    new_user.save()
+    token = Token.objects.create(user=new_user)
+    data = json.dumps({'token':token.key, 'pk':new_user.id})
+
+    return HttpResponse(data, content_type='application/json')
 
 
 ######################################################
@@ -96,6 +123,17 @@ class StudentList(viewsets.ModelViewSet):
 class StudentDetail(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+
+# Retrieves student via authentication token
+class GetStudentByTokenView(APIView):
+    def get(self, request, token, format=None):
+        try:
+            token_obj = Token.objects.get(pk=token)
+            user = User.objects.get(pk=token_obj.user.id)
+            serializer = StudentSerializer(user.student, context={'request': request})
+            return Response(serializer.data)
+        except Token.DoesNotExist:
+            raise Http404
 
 
 ######################################################

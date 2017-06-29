@@ -1,8 +1,6 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework import viewsets
-from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
-from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
-from django.contrib.auth.models import User
 # Class Based View
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,10 +8,17 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
+from django.contrib.auth.models import User
+
+from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
+from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
+
+
 ######################################################
 ###################  Course Views  ###################
 ######################################################
 class CourseList(viewsets.ModelViewSet):
+    # Gets all courses for current user
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
@@ -23,7 +28,7 @@ class CourseList(viewsets.ModelViewSet):
         if username is not None:
             queryset = queryset.filter(student__user__username=username)
         return queryset
-
+    # Overrides perform_create to attach the current student to the newly created course
     def perform_create(self, serializer):
         student = Student.objects.get(user=self.request.user.id)
         serializer.save(student=student)
@@ -55,13 +60,29 @@ def course_grade_detail(request, pk, format=None):
 
         possible = 0.0
         earned = 0.0
+        ungraded_assignments_count = 0
         for x in assignments:
             if x.points_received != None and x.points_received > 0:
-                earned += float(x.points_received)
-                possible += float(x.points_possible)
-
+                try:
+                    earned += float(x.points_received)
+                    possible += float(x.points_possible)
+                except:
+                    raise ValueError
+            else:
+                ungraded_assignments_count += 1
         final_grade = (earned / possible) * 100
-        return Response(final_grade)
+
+
+        final_grade_string = "{0:.2f}%".format(final_grade)
+
+        data = {'final_grade': final_grade,
+                'final_grade_string': final_grade_string,
+                'number_of_ungraded_assignments': ungraded_assignments_count,
+                'total_points_earned': earned,
+                'total_points_possible': possible }
+
+        return JsonResponse(data)
+
 
 
 

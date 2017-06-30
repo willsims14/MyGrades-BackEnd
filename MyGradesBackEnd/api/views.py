@@ -79,36 +79,36 @@ class CourseAssignmentsList(APIView):
         serializer = AssignmentSerializer(assignments, context={'request': request}, many=True)
         return Response(serializer.data)
 
-@api_view(['GET'])
-def course_grade_detail(request, pk, format=None):
+# @api_view(['GET'])
+# def course_grade_detail(request, pk, format=None):
 
-    if request.method == 'GET':
-        assignments = Assignment.objects.filter(course=pk)
+#     if request.method == 'GET':
+#         assignments = Assignment.objects.filter(course=pk)
 
-        possible = 0.0
-        earned = 0.0
-        ungraded_assignments_count = 0
-        for x in assignments:
-            if x.points_received != None and x.points_received > 0:
-                try:
-                    earned += float(x.points_received)
-                    possible += float(x.points_possible)
-                except:
-                    raise ValueError
-            else:
-                ungraded_assignments_count += 1
-        final_grade = (earned / possible) * 100
+#         possible = 0.0
+#         earned = 0.0
+#         ungraded_assignments_count = 0
+#         for x in assignments:
+#             if x.points_received != None and x.points_received > 0:
+#                 try:
+#                     earned += float(x.points_received)
+#                     possible += float(x.points_possible)
+#                 except:
+#                     raise ValueError
+#             else:
+#                 ungraded_assignments_count += 1
+#         final_grade = (earned / possible) * 100
 
 
-        final_grade_string = "{0:.2f}%".format(final_grade)
+#         final_grade_string = "{0:.2f}%".format(final_grade)
 
-        data = {'final_grade': final_grade,
-                'final_grade_string': final_grade_string,
-                'number_of_ungraded_assignments': ungraded_assignments_count,
-                'total_points_earned': earned,
-                'total_points_possible': possible }
+#         data = {'final_grade': final_grade,
+#                 'final_grade_string': final_grade_string,
+#                 'number_of_ungraded_assignments': ungraded_assignments_count,
+#                 'total_points_earned': earned,
+#                 'total_points_possible': possible }
 
-        return JsonResponse(data)
+#         return JsonResponse(data)
 
 
 

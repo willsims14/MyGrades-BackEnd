@@ -29,11 +29,12 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
 
-    url(r'^course/(?P<pk>[0-9]+)/grade/$', views.course_grade_detail),
+    # url(r'^course/(?P<pk>[0-9]+)/grade/$', views.course_grade_detail),
     url(r'^course/(?P<pk>[0-9]+)/assignments/', views.CourseAssignmentsList.as_view()),
 
+    url(r'^register$', views.register_user, name='register'),
+    url(r'^student/get/(?P<token>\w+)/', views.GetStudentByTokenView.as_view()),
     
-    # url(r'^register$', views.register_user, name='register'),
 
     # # Gets student by user token upon register/login
     # url(r'^getstudent/(?P<token>\w+)/', views.GetStudentByTokenView.as_view()),

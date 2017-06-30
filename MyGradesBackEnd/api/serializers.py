@@ -9,12 +9,23 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
         exclude = ()
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
+    # course_assignments = serializers.StringRelatedField(many=True)
+    assignments = AssignmentSerializer(many=True)
+    current_grade = serializers.SerializerMethodField()
+    semester = serializers.CharField()
+
+    def get_current_grade(self, obj):
+        return obj.calculate_grade()
+
     class Meta:
         model = Course
         exclude = ('student',)
 
 
 class StudentSerializer(serializers.HyperlinkedModelSerializer):
+    first_name = serializers.CharField(source="user.first_name")
+    last_name = serializers.CharField(source="user.last_name")
+    username = serializers.CharField(source="user.username")
     class Meta:
         model = Student
         exclude = ('user',)

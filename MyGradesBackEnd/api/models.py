@@ -47,12 +47,31 @@ class Course(models.Model):
         return str(self.title)
 
 
+    def calculate_grade(self):
+        assignments = Assignment.objects.filter(course=self)
+        earned = 0.0
+        possible = 0.0
+        final_grade = 0
+        if assignments is not None:
+            for x in assignments:
+                print(x)
+                if x.points_received != None and x.points_possible != None and x.points_possible > 0:
+                    earned += float(x.points_received)
+                    possible += float(x.points_possible)
+            final_grade = (earned / possible) * 100
+            final_grade_string = "{0:.2f}%".format(final_grade)
+            return final_grade_string
+        else:
+            return "N/A"
+
+
+
 class Assignment(models.Model):
     title = models.CharField(max_length=50)
     points_possible = models.DecimalField(max_digits=9, decimal_places=2)
     points_received = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     description = models.CharField(max_length=255, blank=True, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="course_assignments")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="assignments")
 
     def __str__(self):
         return str(self.title)

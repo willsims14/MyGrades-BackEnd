@@ -58,11 +58,12 @@ class Course(models.Model):
                 if x.points_received != None and x.points_possible != None and x.points_possible > 0:
                     earned += float(x.points_received)
                     possible += float(x.points_possible)
-            final_grade = (earned / possible) * 100
-            final_grade_string = "{0:.2f}%".format(final_grade)
-            return final_grade_string
-        else:
-            return "N/A"
+            if earned != 0 and possible != 0:
+                final_grade = (earned / possible) * 100
+                final_grade_string = "Current Grade: {0:.2f}%".format(final_grade)
+                return final_grade_string
+
+        return "No Graded Assignments Yet!"
 
 
 

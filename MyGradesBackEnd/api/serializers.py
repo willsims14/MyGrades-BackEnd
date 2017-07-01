@@ -13,6 +13,7 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
     assignments = AssignmentSerializer(many=True)
     current_grade = serializers.SerializerMethodField()
     semester = serializers.CharField()
+    id = serializers.CharField()
 
     def get_current_grade(self, obj):
         return obj.calculate_grade()

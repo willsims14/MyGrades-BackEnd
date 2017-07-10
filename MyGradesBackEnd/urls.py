@@ -13,6 +13,7 @@ router = routers.DefaultRouter()
 
 router.register(r'student', views.StudentList)
 router.register(r'course', views.CourseList)
+
 router.register(r'semester', views.SemesterList)
 router.register(r'user', views.UserList)
 router.register(r'assignment', views.AssignmentList)
@@ -34,7 +35,7 @@ urlpatterns = [
 
     url(r'^register$', views.register_user, name='register'),
     url(r'^student/get/(?P<token>\w+)/', views.GetStudentByTokenView.as_view()),
-    
+
 
     # # Gets student by user token upon register/login
     # url(r'^getstudent/(?P<token>\w+)/', views.GetStudentByTokenView.as_view()),

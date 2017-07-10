@@ -46,26 +46,29 @@ def register_user(request):
 ######################################################
 class CourseList(viewsets.ModelViewSet):
     # Gets all courses for current user
-    queryset = Course.objects.all()
+    queryset = Course.objects.all().order_by('-id')
     serializer_class = CourseSerializer
+    ordering_fields = ('id',)
 
     def get_queryset(self):
-        queryset = Course.objects.all()
+        queryset = Course.objects.all().order_by('-id')
         username = self.request.query_params.get('username', None)
         if username is not None:
             queryset = queryset.filter(student__user__username=username)
         return queryset
+
     # Overrides perform_create to attach the current student to the newly created course
     def perform_create(self, serializer):
         student = Student.objects.get(user=self.request.user.id)
+        # semester = Semester.objects.get(pk=self.req_body['semester'])
         serializer.save(student=student)
 
 class CourseDetail(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
+    queryset = Course.objects.all().order_by('-id')
     serializer_class = CourseSerializer
 
 class CourseAssignmentsList(APIView):
-    queryset = Assignment.objects.all()
+    queryset = Assignment.objects.all().order_by('-id')
     serializer_class = AssignmentSerializer
 
     def get_object(self, pk):
@@ -79,37 +82,6 @@ class CourseAssignmentsList(APIView):
         serializer = AssignmentSerializer(assignments, context={'request': request}, many=True)
         return Response(serializer.data)
 
-# @api_view(['GET'])
-# def course_grade_detail(request, pk, format=None):
-
-#     if request.method == 'GET':
-#         assignments = Assignment.objects.filter(course=pk)
-
-#         possible = 0.0
-#         earned = 0.0
-#         ungraded_assignments_count = 0
-#         for x in assignments:
-#             if x.points_received != None and x.points_received > 0:
-#                 try:
-#                     earned += float(x.points_received)
-#                     possible += float(x.points_possible)
-#                 except:
-#                     raise ValueError
-#             else:
-#                 ungraded_assignments_count += 1
-#         final_grade = (earned / possible) * 100
-
-
-#         final_grade_string = "{0:.2f}%".format(final_grade)
-
-#         data = {'final_grade': final_grade,
-#                 'final_grade_string': final_grade_string,
-#                 'number_of_ungraded_assignments': ungraded_assignments_count,
-#                 'total_points_earned': earned,
-#                 'total_points_possible': possible }
-
-#         return JsonResponse(data)
-
 
 
 
@@ -117,11 +89,11 @@ class CourseAssignmentsList(APIView):
 ###################  Student Views  ##################
 ######################################################
 class StudentList(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
+    queryset = Student.objects.all().order_by('-id')
     serializer_class = StudentSerializer
 
 class StudentDetail(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
+    queryset = Student.objects.all().order_by('-id')
     serializer_class = StudentSerializer
 
 # Retrieves student via authentication token
@@ -140,23 +112,28 @@ class GetStudentByTokenView(APIView):
 ###################  Semester Views  #################
 ######################################################
 class SemesterList(viewsets.ModelViewSet):
-    queryset = Semester.objects.all()
+    queryset = Semester.objects.all().order_by('-id')
     serializer_class = SemesterSerializer
 
+
+
+
+
 class SemesterDetail(viewsets.ModelViewSet):
-    queryset = Semester.objects.all()
+    queryset = Semester.objects.all().order_by('-id')
     serializer_class = SemesterSerializer
+
 
 
 ######################################################
 ###################  User Views  #####################
 ######################################################
 class UserList(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('-id')
     serializer_class = UserSerializer
 
 class UserDetail(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('-id')
     serializer_class = UserSerializer
 
 
@@ -164,11 +141,11 @@ class UserDetail(viewsets.ModelViewSet):
 ################  Assignment Views  ##################
 ######################################################
 class AssignmentList(viewsets.ModelViewSet):
-    queryset = Assignment.objects.all()
+    queryset = Assignment.objects.all().order_by('-id')
     serializer_class = AssignmentSerializer
 
 class AssignmentDetail(viewsets.ModelViewSet):
-    queryset = Assignment.objects.all()
+    queryset = Assignment.objects.all().order_by('-id')
     serializer_class = AssignmentSerializer
 
 
@@ -176,9 +153,9 @@ class AssignmentDetail(viewsets.ModelViewSet):
 ####################  School Views  ##################
 ######################################################
 class SchoolList(viewsets.ModelViewSet):
-    queryset = School.objects.all()
+    queryset = School.objects.all().order_by('-id')
     serializer_class = SchoolSerializer
 
 class SchoolDetail(viewsets.ModelViewSet):
-    queryset = School.objects.all()
+    queryset = School.objects.all().order_by('-id')
     serializer_class = SchoolSerializer

@@ -54,7 +54,6 @@ class Course(models.Model):
         final_grade = 0
         if assignments is not None:
             for x in assignments:
-                print(x)
                 if x.points_received != None and x.points_possible != None and x.points_possible > 0:
                     earned += float(x.points_received)
                     possible += float(x.points_possible)

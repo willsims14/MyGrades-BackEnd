@@ -51,7 +51,7 @@ class CourseList(viewsets.ModelViewSet):
     ordering_fields = ('id',)
 
     def get_queryset(self):
-        queryset = Course.objects.all().order_by('-id')
+        queryset = Course.objects.all().order_by('-semester')
         username = self.request.query_params.get('username', None)
         if username is not None:
             queryset = queryset.filter(student__user__username=username)

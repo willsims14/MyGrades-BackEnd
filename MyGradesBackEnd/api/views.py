@@ -12,6 +12,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 # Method Based View
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+
 from rest_framework import status
 
 from django.contrib.auth.models import User
@@ -44,31 +46,61 @@ def register_user(request):
 ######################################################
 ###################  Course Views  ###################
 ######################################################
+
+
+
+
+
+
 class CourseList(viewsets.ModelViewSet):
     # Gets all courses for current user
-    queryset = Course.objects.all().order_by('-id')
+    queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    ordering_fields = ('id',)
+    print("\n\n\nHELLO11\n\n\n")
+
 
     def get_queryset(self):
-        queryset = Course.objects.all().order_by('-id')
+        queryset = Course.objects.all()
         username = self.request.query_params.get('username', None)
         if username is not None:
             queryset = queryset.filter(student__user__username=username)
         return queryset
 
-    # Overrides perform_create to attach the current student to the newly created course
+#     # Overrides perform_create to attach the current student to the newly created course
     def perform_create(self, serializer):
         student = Student.objects.get(user=self.request.user.id)
+        semester = Semester.objects.get(pk=1)
         # semester = Semester.objects.get(pk=self.req_body['semester'])
-        serializer.save(student=student)
+        print("\n\n\nHELLO2\n\n\n")
+        serializer.save(student=student, semester=semester)
+
+    # def create(self, request):
+    #     # Look up objects by arbitrary attributes.
+    #     # You can check here if your students are participating
+    #     # the classes and have taken the subjects they sign up for.
+    #     semester = get_object_or_404(semester, title=request.data.get('semester'))
+    #     student = Student.objects.get(user=self.request.user.id)
+    #     # clazz = get_object_or_404(
+    #     #     Class, 
+    #     #     number=request.data.get('clazz_number')
+    #     #     letter=request.data.get('clazz_letter')
+    #     # )
+
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save(student=student, semester=semester)
+    #     headers = self.get_success_headers(serializer.data)
+
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
 
 class CourseDetail(viewsets.ModelViewSet):
-    queryset = Course.objects.all().order_by('-id')
+    queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
 class CourseAssignmentsList(APIView):
-    queryset = Assignment.objects.all().order_by('-id')
+    queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
 
     def get_object(self, pk):
@@ -112,7 +144,7 @@ class GetStudentByTokenView(APIView):
 ###################  Semester Views  #################
 ######################################################
 class SemesterList(viewsets.ModelViewSet):
-    queryset = Semester.objects.all().order_by('-id')
+    queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
 
 
@@ -120,7 +152,7 @@ class SemesterList(viewsets.ModelViewSet):
 
 
 class SemesterDetail(viewsets.ModelViewSet):
-    queryset = Semester.objects.all().order_by('-id')
+    queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
 
 

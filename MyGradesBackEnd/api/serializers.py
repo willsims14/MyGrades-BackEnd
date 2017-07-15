@@ -8,9 +8,17 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
         model = Assignment
         exclude = ()
 
+class SemesterSerializer(serializers.HyperlinkedModelSerializer):
+    # url = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True)
+    class Meta:
+        model = Semester
+        exclude = ()
+
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
     assignments = AssignmentSerializer(many=True, read_only=True)
     current_grade = serializers.SerializerMethodField()
+    semester = SemesterSerializer(read_only=True)
     id = serializers.CharField(read_only=True)
 
     def get_current_grade(self, obj):
@@ -20,7 +28,8 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
         model = Course
         exclude = ('student',)
         depth = 1
-        ordering = ['-id']
+
+
 
 
 class StudentSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,11 +41,6 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         exclude = ('user',)
 
 
-class SemesterSerializer(serializers.HyperlinkedModelSerializer):
-    # url = serializers.CharField(read_only=True)
-    class Meta:
-        model = Semester
-        exclude = ()
 
 class SchoolSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

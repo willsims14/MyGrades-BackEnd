@@ -22,11 +22,15 @@ router.register(r'school', views.SchoolList)
 # router.register(r'professor', views.ProfessorList)
 
 
+
 app_name = "MyGrades"
 
 urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api-token-auth/', obtain_auth_token),
+
+    url(r'^course/create/', views.CourseView.as_view()),
+    
     url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
 
@@ -41,7 +45,6 @@ urlpatterns = [
     # url(r'^getstudent/(?P<token>\w+)/', views.GetStudentByTokenView.as_view()),
 
     # # Courses
-    # url(r'^course/create/', views.CourseView.as_view()),
     # url(r'^course/delete/(?P<pk>[0-9]+)/$', views.CourseView.as_view()),
 
     # # Assignments

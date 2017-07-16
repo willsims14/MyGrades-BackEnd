@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.http import HttpResponse
 
@@ -6,18 +5,14 @@ from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 
-
 # Class Based View
-from rest_framework.views import APIView
 from rest_framework.response import Response
 # Method Based View
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 
 from rest_framework import status
 
 from django.contrib.auth.models import User
-
 from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
 from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
 
@@ -48,15 +43,10 @@ def register_user(request):
 ######################################################
 
 
-
-
-
-
 class CourseList(viewsets.ModelViewSet):
     # Gets all courses for current user
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    print("\n\n\nHELLO11\n\n\n")
 
 
     def get_queryset(self):
@@ -66,33 +56,34 @@ class CourseList(viewsets.ModelViewSet):
             queryset = queryset.filter(student__user__username=username)
         return queryset
 
-#     # Overrides perform_create to attach the current student to the newly created course
-    def perform_create(self, serializer):
-        student = Student.objects.get(user=self.request.user.id)
-        semester = Semester.objects.get(pk=1)
-        # semester = Semester.objects.get(pk=self.req_body['semester'])
-        print("\n\n\nHELLO2\n\n\n")
-        serializer.save(student=student, semester=semester)
+# Custom class for POSTing new courses with a nested semester 
+class CourseView(APIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
 
-    # def create(self, request):
-    #     # Look up objects by arbitrary attributes.
-    #     # You can check here if your students are participating
-    #     # the classes and have taken the subjects they sign up for.
-    #     semester = get_object_or_404(semester, title=request.data.get('semester'))
-    #     student = Student.objects.get(user=self.request.user.id)
-    #     # clazz = get_object_or_404(
-    #     #     Class, 
-    #     #     number=request.data.get('clazz_number')
-    #     #     letter=request.data.get('clazz_letter')
-    #     # )
+    def post(self, request, format=None):
+        
+        req_body = json.loads(request.body.decode())
+        
+        semester_from_db = Semester.objects.get(pk=req_body['semester'])
 
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save(student=student, semester=semester)
-    #     headers = self.get_success_headers(serializer.data)
+        new_course = Course.objects.create(
+            title = req_body['title'],
+            course_number = req_body['course_number'],
+            professor = req_body['professor'],
+            description = req_body['description'],
+            student = Student.objects.get(pk=request.user.id),
+            semester = semester_from_db
+        )
 
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        token = Token.objects.get(user=request.user)
+        data = json.dumps({'token':token.key})
 
+        try:
+            new_course.save()
+            return Response(data, content_type='application/json')
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class CourseDetail(viewsets.ModelViewSet):

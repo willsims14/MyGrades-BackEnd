@@ -164,6 +164,13 @@ class AssignmentList(viewsets.ModelViewSet):
     queryset = Assignment.objects.all().order_by('-id')
     serializer_class = AssignmentSerializer
 
+    def post(self, request, format=None):
+        serializer = AssignmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class AssignmentDetail(viewsets.ModelViewSet):
     queryset = Assignment.objects.all().order_by('-id')
     serializer_class = AssignmentSerializer

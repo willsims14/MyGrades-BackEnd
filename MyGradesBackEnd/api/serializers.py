@@ -4,6 +4,7 @@ from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, Sc
 
 
 class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.CharField()
     class Meta:
         model = Assignment
         exclude = ()

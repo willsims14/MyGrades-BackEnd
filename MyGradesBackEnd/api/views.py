@@ -139,9 +139,6 @@ class SemesterList(viewsets.ModelViewSet):
     serializer_class = SemesterSerializer
 
 
-
-
-
 class SemesterDetail(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer

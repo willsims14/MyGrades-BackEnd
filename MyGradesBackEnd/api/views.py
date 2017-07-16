@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.http import HttpResponse
 
@@ -6,18 +5,14 @@ from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 
-
 # Class Based View
-from rest_framework.views import APIView
 from rest_framework.response import Response
 # Method Based View
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 
 from rest_framework import status
 
 from django.contrib.auth.models import User
-
 from MyGradesBackEnd.api.models import Course, Student, Semester, Assignment, School
 from MyGradesBackEnd.api.serializers import CourseSerializer, StudentSerializer, SemesterSerializer, UserSerializer, AssignmentSerializer, SchoolSerializer
 
@@ -48,10 +43,6 @@ def register_user(request):
 ######################################################
 
 
-
-
-
-
 class CourseList(viewsets.ModelViewSet):
     # Gets all courses for current user
     queryset = Course.objects.all()
@@ -65,25 +56,10 @@ class CourseList(viewsets.ModelViewSet):
             queryset = queryset.filter(student__user__username=username)
         return queryset
 
-#     # Overrides perform_create to attach the current student to the newly created course
-    def perform_create(self, serializer):
-        student = Student.objects.get(user=self.request.user.id)
-        semester = Semester.objects.get(pk=1)
-        print("\n\n\nHELLO2\n\n\n")
-        serializer.save(student=student, semester=semester)
-
+# Custom class for POSTing new courses with a nested semester 
 class CourseView(APIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-
-    def get(self, request, format=None):
-        courses = Course.objects.all()
-        username = self.request.query_params.get('username', None)
-        if username is not None:
-            queryset = queryset.filter(student__user__username=username)
-        serializer = CourseSerializer(courses, context={'request': request}, many=True)
-        return Response(serializer.data)
-
 
     def post(self, request, format=None):
         
@@ -108,10 +84,6 @@ class CourseView(APIView):
             return Response(data, content_type='application/json')
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 
 
 class CourseDetail(viewsets.ModelViewSet):
